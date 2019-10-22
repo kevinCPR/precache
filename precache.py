@@ -714,7 +714,8 @@ class PreCache(object):
         if keep_file:
             folder = store_in
             lf = os.path.join(folder, asset.version, lf)
-            os.makedirs(os.path.dirname(lf))
+            if not os.path.exists(os.path.dirname(lf)):
+                os.makedirs(os.path.dirname(lf))
             self.log.info('Saving file to: %s' % (lf))
 
             if not self.dry_run:
