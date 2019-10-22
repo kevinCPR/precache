@@ -708,12 +708,13 @@ class PreCache(object):
 
     # Download the asset
     def download(self, asset, keep_file=False, store_in=None):
-        lf = os.path.basename(asset.url)
-        lf = lf.split('?')[0]
+        lf = os.path.basename(asset.version + '/' + asset.model + '.ipsw')
+        #lf = lf.split('?')[0]
 
         if keep_file:
             folder = store_in
-            lf = os.path.join(folder, lf)
+            lf = os.path.join(folder, asset.version, lf)
+            os.makedirs(os.path.dirname(lf))
             self.log.info('Saving file to: %s' % (lf))
 
             if not self.dry_run:
