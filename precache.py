@@ -128,7 +128,7 @@ class PreCache(object):
             'app': 'MacAppStore/2.2 (Macintosh; OS X 10.12.1; 16B2555) AppleWebKit/2602.2.14.0.7',  # NOQA
             'updates': 'Software%20Update (unknown version) CFNetwork/760.5.1 Darwin/15.5.0 (x86_64)',  # NOQA
             'installer': 'MacAppStore/2.2 (Macintosh; OS X 10.12.1; 16B2555) AppleWebKit/2602.2.14.0.7',  # NOQA
-            'ipsw': 'com.apple.appstored iOS/10.1',
+            'ipsw': 'com.apple.appstored iOS/13.1',
             'Watch': 'com.apple.appstored',
             'AppleTV': 'com.apple.appstored',
             'iPad': 'com.apple.appstored',
