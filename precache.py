@@ -343,7 +343,7 @@ class PreCache(object):
 
                     group = group_type(model)
 
-                    if len(os_ver.split('.')) < 4:
+                    if len(os_ver.split('.')) < 6:
                         if is_watch(model):
                             self.add_asset(model, os_ver, url, group)
                         else:
