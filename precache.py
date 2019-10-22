@@ -343,12 +343,11 @@ class PreCache(object):
 
                     group = group_type(model)
 
-                    if len(os_ver.split('.')) < 4:
-                        if is_watch(model):
+                    if is_watch(model):
+                        self.add_asset(model, os_ver, url, group)
+                    else:
+                        if cacheable(item):
                             self.add_asset(model, os_ver, url, group)
-                        else:
-                            if cacheable(item):
-                                self.add_asset(model, os_ver, url, group)
 
             [self.ipsw_models_master.append(item.model) for item in
              self.assets_master if item.model not in self.ipsw_models_master]
@@ -780,18 +779,18 @@ class PreCache(object):
                         self.log.info('Cached %s (%s) %s' % (asset.model,
                                                              asset.version,
                                                              asset.url))
-                    else:
-                        req.close()
-                        print(
-                            'Skipped: %s (%s) - in cache' % (
-                                asset.model, asset.version
-                                )
-                             )
-                        self.log.info(
-                            'Skipped: %s (%s) - in cache' % (
-                                asset.model, asset.version
-                            )
-                        )
+                    # else:
+                    #     req.close()
+                    #     print(
+                    #         'Skipped: %s (%s) - in cache' % (
+                    #             asset.model, asset.version
+                    #             )
+                    #          )
+                    #     self.log.info(
+                    #         'Skipped: %s (%s) - in cache' % (
+                    #             asset.model, asset.version
+                    #         )
+                    #     )
             except (urllib2.URLError, urllib2.HTTPError) as e:
                 req.close()
                 print('%s' % (e))
