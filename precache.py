@@ -343,11 +343,12 @@ class PreCache(object):
 
                     group = group_type(model)
 
-                    if is_watch(model):
-                        self.add_asset(model, os_ver, url, group)
-                    else:
-                        if cacheable(item):
+                    if len(os_ver.split('.')) < 4:
+                        if is_watch(model):
                             self.add_asset(model, os_ver, url, group)
+                        else:
+                            if cacheable(item):
+                                self.add_asset(model, os_ver, url, group)
 
             [self.ipsw_models_master.append(item.model) for item in
              self.assets_master if item.model not in self.ipsw_models_master]
