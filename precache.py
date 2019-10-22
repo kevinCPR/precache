@@ -343,12 +343,12 @@ class PreCache(object):
 
                     group = group_type(model)
 
-                    if len(os_ver.split('.')) < 6:
-                        if is_watch(model):
+                    #if len(os_ver.split('.')) < :
+                    if is_watch(model):
+                        self.add_asset(model, os_ver, url, group)
+                    else:
+                        if cacheable(item):
                             self.add_asset(model, os_ver, url, group)
-                        else:
-                            if cacheable(item):
-                                self.add_asset(model, os_ver, url, group)
 
             [self.ipsw_models_master.append(item.model) for item in
              self.assets_master if item.model not in self.ipsw_models_master]
@@ -737,49 +737,49 @@ class PreCache(object):
                         ua = 'precache/%s' % (self.version)
 
                     req = self.url_request(asset.url, user_agent=ua)
-                    if req.info().getheader('Content-Type') is not None:
-                        try:
-                            self.log.debug(
-                                ' Fetch attempt: %s' % (asset.url)
-                            )
-                            ts = req.info().getheader('Content-Length').strip()
-                            human_fs = self.convert_size(float(ts))
-                            header = True
-                        except AttributeError:
-                            header = False
-                            human_fs = 0
+                    #if req.info().getheader('Content-Type') is not None:
+                    try:
+                        self.log.debug(
+                            ' Fetch attempt: %s' % (asset.url)
+                        )
+                        ts = req.info().getheader('Content-Length').strip()
+                        human_fs = self.convert_size(float(ts))
+                        header = True
+                    except AttributeError:
+                        header = False
+                        human_fs = 0
 
-                        if header:
-                            ts = int(ts)
-                            bytes_so_far = 0
-                            self.log.info(
-                                'Downloading %s (%s) %s' % (asset.model,
-                                                            asset.version,
-                                                            asset.url)
-                            )
+                    if header:
+                        ts = int(ts)
+                        bytes_so_far = 0
+                        self.log.info(
+                            'Downloading %s (%s) %s' % (asset.model,
+                                                        asset.version,
+                                                        asset.url)
+                        )
 
-                        while True:
-                            buffer = req.read(8192)
-                            if not buffer:
-                                print('')
-                                break
+                    while True:
+                        buffer = req.read(8192)
+                        if not buffer:
+                            print('')
+                            break
 
-                            bytes_so_far += len(buffer)
+                        bytes_so_far += len(buffer)
 
-                            if keep_file:
-                                f.write(buffer)
+                        if keep_file:
+                            f.write(buffer)
 
-                            if not header:
-                                ts = bytes_so_far
+                        if not header:
+                            ts = bytes_so_far
 
-                            percent = float(bytes_so_far) / ts
-                            percent = round(percent*100, 2)
+                        percent = float(bytes_so_far) / ts
+                        percent = round(percent*100, 2)
 
-                            self.progress_output(asset, percent, human_fs)
-                        req.close()
-                        self.log.info('Cached %s (%s) %s' % (asset.model,
-                                                             asset.version,
-                                                             asset.url))
+                        self.progress_output(asset, percent, human_fs)
+                    req.close()
+                    self.log.info('Cached %s (%s) %s' % (asset.model,
+                                                         asset.version,
+                                                         asset.url))
                     # else:
                     #     req.close()
                     #     print(
