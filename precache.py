@@ -708,7 +708,14 @@ class PreCache(object):
 
     # Download the asset
     def download(self, asset, keep_file=False, store_in=None):
-        lf = os.path.basename(asset.version + '/' + asset.model + '.ipsw')
+        #creates dictionary of model identifiers and friendly models as key/value
+        m = open('./models.txt', 'r')
+        models = {}
+        for line in m:
+            k, v = line.strip().split(':')
+            models[k.strip()] = v.strip()
+        friendlyModel = models.get(asset.model)
+        lf = os.path.basename(asset.version + '/' + friendlyModel + '.ipsw')
         #lf = lf.split('?')[0]
 
         if keep_file:
@@ -724,9 +731,12 @@ class PreCache(object):
                     self.log.debug('Created folder %s' % (folder))
         else:
             lf = os.path.join(os.devnull, lf)
-
+        cached = os.path.exists(lf)
         try:
-            f = open(lf, 'wb')
+            if not cached:
+                f = open(lf, 'wb')
+            else:
+                pass
         except:
             pass
 
@@ -739,61 +749,61 @@ class PreCache(object):
                         ua = 'precache/%s' % (self.version)
 
                     req = self.url_request(asset.url, user_agent=ua)
-                    #if req.info().getheader('Content-Type') is not None:
-                    try:
-                        self.log.debug(
-                            ' Fetch attempt: %s' % (asset.url)
-                        )
-                        ts = req.info().getheader('Content-Length').strip()
-                        human_fs = self.convert_size(float(ts))
-                        header = True
-                    except AttributeError:
-                        header = False
-                        human_fs = 0
+                    if not cached:
+                        try:
+                            self.log.debug(
+                                ' Fetch attempt: %s' % (asset.url)
+                            )
+                            ts = req.info().getheader('Content-Length').strip()
+                            human_fs = self.convert_size(float(ts))
+                            header = True
+                        except AttributeError:
+                            header = False
+                            human_fs = 0
 
-                    if header:
-                        ts = int(ts)
-                        bytes_so_far = 0
+                        if header:
+                            ts = int(ts)
+                            bytes_so_far = 0
+                            self.log.info(
+                                'Downloading %s (%s) %s' % (asset.model,
+                                                            asset.version,
+                                                            asset.url)
+                            )
+
+                        while True:
+                            buffer = req.read(8192)
+                            if not buffer:
+                                print('')
+                                break
+
+                            bytes_so_far += len(buffer)
+
+                            if keep_file:
+                                f.write(buffer)
+
+                            if not header:
+                                ts = bytes_so_far
+
+                            percent = float(bytes_so_far) / ts
+                            percent = round(percent*100, 2)
+
+                            self.progress_output(asset, percent, human_fs)
+                        req.close()
+                        self.log.info('Cached %s (%s) %s' % (asset.model,
+                                                             asset.version,
+                                                             asset.url))
+                    else:
+                        req.close()
+                        print(
+                            'Skipped: %s (%s) - in cache' % (
+                                asset.model, asset.version
+                                )
+                             )
                         self.log.info(
-                            'Downloading %s (%s) %s' % (asset.model,
-                                                        asset.version,
-                                                        asset.url)
+                            'Skipped: %s (%s) - in cache' % (
+                                asset.model, asset.version
+                            )
                         )
-
-                    while True:
-                        buffer = req.read(8192)
-                        if not buffer:
-                            print('')
-                            break
-
-                        bytes_so_far += len(buffer)
-
-                        if keep_file:
-                            f.write(buffer)
-
-                        if not header:
-                            ts = bytes_so_far
-
-                        percent = float(bytes_so_far) / ts
-                        percent = round(percent*100, 2)
-
-                        self.progress_output(asset, percent, human_fs)
-                    req.close()
-                    self.log.info('Cached %s (%s) %s' % (asset.model,
-                                                         asset.version,
-                                                         asset.url))
-                    # else:
-                    #     req.close()
-                    #     print(
-                    #         'Skipped: %s (%s) - in cache' % (
-                    #             asset.model, asset.version
-                    #             )
-                    #          )
-                    #     self.log.info(
-                    #         'Skipped: %s (%s) - in cache' % (
-                    #             asset.model, asset.version
-                    #         )
-                    #     )
             except (urllib2.URLError, urllib2.HTTPError) as e:
                 req.close()
                 print('%s' % (e))
