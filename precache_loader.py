@@ -1,6 +1,6 @@
 import os
 from os.path import expanduser,join
-with open('./precache/precache/models.txt') as f:
+with open('./precache/models.txt') as f:
     mobileDevices = f.read().splitlines()
 
 i = 1
