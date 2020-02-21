@@ -101,7 +101,7 @@ class PreCache(object):
         self.mesu_url = 'http://mesu.apple.com/assets'
         self.mobile_asset_path = 'com_apple_MobileAsset_SoftwareUpdate'
         self.mobile_update_xml = 'com_apple_MobileAsset_SoftwareUpdate.xml'
-        self.osx_catalog_xml = 'https://swscan.apple.com/content/catalogs/others/index-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog'  # NOQA
+        self.osx_catalog_xml = 'https://swscan.apple.com/content/catalogs/others/index-10.14-10.13-10.12-10.11-10.10-10.9-mountainlion-lion-snowleopard-leopard.merged-1.sucatalog'  # NOQA
 
         self.ios_update_feeds = {
             'watch': '%s/watch/%s/%s' % (self.mesu_url,
